@@ -1,0 +1,31 @@
+moodle:
+  build: .
+  ports:
+    - 80:80
+  volumes:
+    - ./calo:/var/www/htdocs/www/calo
+  volumes_from:
+    - moodle_data
+  links:
+    - db
+
+moodle_data:
+  image: busybox
+  volumes:
+    - /var/www/moodledata
+  command: chown -R www-data:www-data /var/www/moodledata
+
+db:
+  image: mariadb
+  environment:
+    - MYSQL_ROOT_PASSWORD=admin
+    - MYSQL_DATABASE=moodle
+  volumes:
+    - ./cfg/db.cnf:/etc/mysql/conf.d/db.cnf
+  volumes_from:
+    - db_data
+
+db_data:
+  image: busybox
+  volumes:
+    - /var/lib/mysql
